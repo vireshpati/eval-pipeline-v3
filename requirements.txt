@@ -1,0 +1,7 @@
+fairseq2>=0.4.5
+torch>=2.0.0
+torchaudio>=2.0.0
+torchvision>=0.15.0
+numpy>=1.23.0
+pyyaml>=6.0
+tqdm>=4.62.0

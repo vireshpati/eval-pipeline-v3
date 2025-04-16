@@ -1,0 +1,8 @@
+data/
+**/__pycache__/
+**/fairseq2/
+venv/
+.DS_Store
+checkpoints/
+tests/
+Archive.zip
