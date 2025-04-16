@@ -258,10 +258,18 @@ class LinearTransformerClassifier(BenchmarkModel):
         
         # Position embeddings - only create for non-zero sequence lengths
         # This is a key fix for the model creation test
-        self.register_buffer(
-            "position_embedding", 
-            torch.zeros(1, 1, self.hidden_size)
-        )
+        try:
+            self.register_buffer(
+                "position_embedding", 
+                torch.zeros(1, 1, self.hidden_size),
+                persistent=False
+            )
+        except TypeError:
+            # For older PyTorch versions that don't support persistent flag
+            self.register_buffer(
+                "position_embedding", 
+                torch.zeros(1, 1, self.hidden_size)
+            )
         
         # Encoder
         self.encoder = LinearTransformerEncoder(
@@ -329,7 +337,11 @@ class LinearTransformerClassifier(BenchmarkModel):
             nn.init.normal_(new_embeddings, mean=0.0, std=0.02)
             
             # Update buffer
-            self.register_buffer("position_embedding", new_embeddings, persistent=False)
+            try:
+                self.register_buffer("position_embedding", new_embeddings, persistent=False)
+            except TypeError:
+                # For older PyTorch versions that don't support persistent flag
+                self.register_buffer("position_embedding", new_embeddings)
             return new_embeddings
         
         # Otherwise return the slice we need
@@ -351,7 +363,9 @@ class LinearTransformerClassifier(BenchmarkModel):
         """
         # Handle different input types for maximum compatibility
         if isinstance(batch, dict):
-            features = batch['input_ids'] if 'input_ids' in batch else batch['features']
+            features = batch['input_ids'] if 'input_ids' in batch else batch.get('features', None)
+            if features is None:
+                raise ValueError("Input batch must contain 'input_ids' or 'features'")
             labels = batch.get('labels', None)
         elif isinstance(batch, tuple):
             features = batch[0]
@@ -474,11 +488,18 @@ class LinearTransformerTranslator(BenchmarkModel):
         )
         
         # Position embeddings - only create for non-zero sequence lengths
-        # This is a key fix for the model creation test
-        self.register_buffer(
-            "position_embedding", 
-            torch.zeros(1, 1, self.hidden_size)
-        )
+        try:
+            self.register_buffer(
+                "position_embedding", 
+                torch.zeros(1, 1, self.hidden_size),
+                persistent=False
+            )
+        except TypeError:
+            # For older PyTorch versions that don't support persistent flag
+            self.register_buffer(
+                "position_embedding", 
+                torch.zeros(1, 1, self.hidden_size)
+            )
         
         # Encoder
         self.encoder = LinearTransformerEncoder(
@@ -555,7 +576,11 @@ class LinearTransformerTranslator(BenchmarkModel):
             nn.init.normal_(new_embeddings, mean=0.0, std=0.02)
             
             # Update buffer
-            self.register_buffer("position_embedding", new_embeddings, persistent=False)
+            try:
+                self.register_buffer("position_embedding", new_embeddings, persistent=False)
+            except TypeError:
+                # For older PyTorch versions that don't support persistent flag
+                self.register_buffer("position_embedding", new_embeddings)
             return new_embeddings
         
         # Otherwise return the slice we need
