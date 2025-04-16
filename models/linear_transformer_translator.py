@@ -11,7 +11,7 @@ from models.linear_transformer import LinearTransformerEncoder
 
 
 class LinearTransformerTranslator(BenchmarkModel):
-    """Linear Transformer model for translation tasks."""
+    """Linear Transformer model for translation ptasks."""
     
     def __init__(self, config: Dict[str, Any]):
         """Initialize the model with the given configuration.

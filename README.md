@@ -1,5 +1,7 @@
 # Benchmarking Project
 
+NOTE: known error with linear_transformer implementation. Working on fix (4/16).
+
 This repository contains the code for three benchmarking tasks:
 1. Speech Classification (SC10)
 2. Machine Translation (MT)
